@@ -23,7 +23,7 @@ include('./constants.php');
 		<button type="button" id="edit-icon">Add Image</button>
 
 
-		<input type="file" id="file-upload" style="display:none;">
+		<input type="file" id="file-upload" style="display:none;" multiple>
 
 
 	</div>
@@ -225,95 +225,116 @@ include('./constants.php');
 
 			$('#file-upload').on('change', function() {
 
-				var file_data = $('#file-upload').prop('files')[0];
-
 				var img_height = <?= MANUAL_CROP_HEIGHT ?>;
 				var img_width = <?= MANUAL_CROP_WIDTH ?>;
 
 				var form_data = new FormData();
-				form_data.append('action', 'tmp_crop_image');
-
 				form_data.append('img_height', img_height);
 				form_data.append('img_width', img_width);
 
-				if (file_data) {
-					var img = new Image();
-					img.onload = function() {
-						var width = parseInt(img.width);
-						var height = parseInt(img.height);
-						if (width < img_width || height < img_height) {
-							alert('Minimum Image Width: ' + img_width + 'px, Minimum Image Height: ' + img_height + 'px.');
-						} else {
-							form_data.append('image', file_data);
+				var files = $('#file-upload').prop('files');
+				if (files.length > 1) {
+					form_data.append('action', 'multi_image_crop');
 
-							var url = 'ajax.php';
+					for (var i = 0; i < files.length; i++) {
+						form_data.append('files[]', files[i]);
+					}
 
-							$.ajax({
+					var url = 'ajax.php';
+					$.ajax({
+						url: url,
+						cache: false,
+						contentType: false,
+						processData: false,
+						data: form_data,
+						type: 'post',
+						dataType: 'json',
+						success: function(res) {
 
-								url: url,
-
-								cache: false,
-
-								contentType: false,
-
-								processData: false,
-
-								data: form_data,
-
-								type: 'post',
-
-								dataType: 'json',
-
-								success: function(res) {
-									if (res.status !== 0) {
-
-										$('#fv1').val(res.resizedimg);
-
-										$('#fv2').val(res.maxWidth);
-
-										$('#fv3').val(res.maxHeight);
-
-										$('#fv4').val(res.dir_path);
-
-										$('#fv5').val(res.thumbFileName);
-
-										$('#fv6').val(res.ext);
-										
-										if (res.status == 1) {
-
-											var path = 'images/' + res.image_name;
-
-											$('#crop-modal').modal('show');
-
-											$('#resized_image').attr('src', path);
-
-											$('#crop_wrapper').css('width', res.resize_width);
-
-											$('#crop_wrapper').css('height', res.resize_height);
-
-											$('#crop_wrapper img').css('width', res.resize_width);
-
-											$('#crop_wrapper img').css('height', res.resize_height);
-
-											$('#crop_div').css('width', res.selector_width);
-
-											$('#crop_div').css('height', res.selector_height);
-
-										} else if (res.status == 2) {
-											$('#crop_image_form').submit();
-										}
-										
-									}
-								}
-
-							});
 						}
+					});
+				} else {
+					var file_data = files[0];
+					form_data.append('action', 'tmp_crop_image');
 
-					};
-					img.src = URL.createObjectURL(file_data);
+					if (file_data) {
+						var img = new Image();
+						img.onload = function() {
+							var width = parseInt(img.width);
+							var height = parseInt(img.height);
+							if (width < img_width || height < img_height) {
+								alert('Minimum Image Width: ' + img_width + 'px, Minimum Image Height: ' + img_height + 'px.');
+							} else {
+								form_data.append('image', file_data);
+
+								var url = 'ajax.php';
+
+								$.ajax({
+
+									url: url,
+
+									cache: false,
+
+									contentType: false,
+
+									processData: false,
+
+									data: form_data,
+
+									type: 'post',
+
+									dataType: 'json',
+
+									success: function(res) {
+										if (res.status !== 0) {
+
+											$('#fv1').val(res.resizedimg);
+
+											$('#fv2').val(res.maxWidth);
+
+											$('#fv3').val(res.maxHeight);
+
+											$('#fv4').val(res.dir_path);
+
+											$('#fv5').val(res.thumbFileName);
+
+											$('#fv6').val(res.ext);
+
+											if (res.status == 1) {
+
+												var path = 'images/' + res.image_name;
+
+												$('#crop-modal').modal('show');
+
+												$('#resized_image').attr('src', path);
+
+												$('#crop_wrapper').css('width', res.resize_width);
+
+												$('#crop_wrapper').css('height', res.resize_height);
+
+												$('#crop_wrapper img').css('width', res.resize_width);
+
+												$('#crop_wrapper img').css('height', res.resize_height);
+
+												$('#crop_div').css('width', res.selector_width);
+
+												$('#crop_div').css('height', res.selector_height);
+
+											} else if (res.status == 2) {
+												$('#crop_image_form').submit();
+											}
+
+										}
+									}
+
+								});
+							}
+
+						};
+						img.src = URL.createObjectURL(file_data);
+					}
+
 				}
-
-
 			});
 
 		});
