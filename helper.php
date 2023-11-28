@@ -53,6 +53,12 @@ function image_resize($data, $height, $width)
 				$resizedimg = $dirPath . $tmpFileName . "." . $ext;
 				$resizedimgname = $tmpFileName . "." . $ext;
 				break;
+			case IMAGETYPE_AVIF:
+				$resizedimg = resize($maxWidth, $maxHeight, $uploadedFile);
+				imageavif($resizedimg, $dirPath . $tmpFileName . "." . $ext);
+				$resizedimg = $dirPath . $tmpFileName . "." . $ext;
+				$resizedimgname = $tmpFileName . "." . $ext;
+				break;
 			default:
 				// echo "Invalid Image type.<br><a href='index.php'>Back</a>";
 				return false;
@@ -114,6 +120,11 @@ function resize($maxWidth, $maxHeight, $originalFile)
 			$image_create_func = 'imagecreatefromwebp';
 			$image_save_func = 'imagewebp';
 			$new_image_ext = 'webp';
+			break;
+		case 'image/avif':
+			$image_create_func = 'imagecreatefromavif';
+			$image_save_func = 'imageavif';
+			$new_image_ext = 'avif';
 			break;
 		default:
 			throw new Exception('Unknown image type.');
@@ -207,6 +218,14 @@ function final_crop($data)
 				$new_name = $thumbFileName . "_" . $maxWidth . "X" . $maxHeight . "." . $ext;
 				unlink($image);
 				imagewebp($tmp, $dirPath . $new_name);
+				break;
+			case IMAGETYPE_AVIF:
+				$imageSrc = imagecreatefromavif($image);
+				$newImageLayer = imagecreatetruecolor($maxWidth, $maxHeight);
+				$tmp = imageCropResize($imageSrc, $resizedWidth, $resizedHeight, $w, $h, $x1, $y1);
+				$new_name = $thumbFileName . "_" . $maxWidth . "X" . $maxHeight . "." . $ext;
+				unlink($image);
+				imageavif($tmp, $dirPath . $new_name);
 				break;
 			default:
 				// echo "Invalid Image type.<br><a href='index.php'>Back</a>";
