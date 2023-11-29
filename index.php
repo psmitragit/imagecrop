@@ -13,6 +13,49 @@ include('./constants.php');
 	<script src='./assets/jquery-3.6.4.min.js'></script>
 	<script src='./assets/jquery-ui.js'></script>
 </head>
+<style>
+	#crop_wrapper {
+
+		position: relative;
+
+		margin: 50px auto auto auto;
+
+		overflow: hidden;
+
+	}
+
+
+
+	#crop_div {
+
+		border: 1px solid red;
+
+		position: absolute;
+
+		top: 0px;
+
+		box-sizing: border-box;
+
+		box-shadow: 0 0 0 99999px rgba(255, 255, 255, 0.5);
+
+	}
+
+	.modal-xl {
+		max-width: 80%;
+		/* Adjust the percentage based on your design */
+	}
+
+	#crop_wrapper {
+		overflow: auto;
+		/* or overflow: hidden; depending on your design */
+	}
+
+	.modal-body {
+		max-height: 80vh;
+		/* Adjust the percentage based on your design */
+		overflow: auto;
+	}
+</style>
 
 <body>
 	<div>
@@ -70,35 +113,6 @@ include('./constants.php');
 						}
 					</script>
 
-
-
-					<style>
-						#crop_wrapper {
-
-							position: relative;
-
-							margin: 50px auto auto auto;
-
-							overflow: hidden;
-
-						}
-
-
-
-						#crop_div {
-
-							border: 1px solid red;
-
-							position: absolute;
-
-							top: 0px;
-
-							box-sizing: border-box;
-
-							box-shadow: 0 0 0 99999px rgba(255, 255, 255, 0.5);
-
-						}
-					</style>
 
 					<div class="modal-body">
 
