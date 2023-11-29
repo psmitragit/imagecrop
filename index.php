@@ -14,6 +14,35 @@ include('./constants.php');
 	<script src='./assets/jquery-ui.js'></script>
 </head>
 <style>
+	body {
+		margin: 0;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100vh;
+		background-color: #f0f0f0;
+		/* Set a background color for the page */
+	}
+
+	#transparent-box {
+		background-color: rgba(255, 255, 255, 0.7);
+		/* Use rgba for transparency */
+		padding: 20px;
+		border-radius: 10px;
+		text-align: center;
+	}
+
+	#edit-icon {
+		padding: 10px 20px;
+		font-size: 16px;
+		cursor: pointer;
+	}
+
+	#file-upload {
+		display: none;
+	}
+
 	#crop_wrapper {
 
 		position: relative;
@@ -55,20 +84,39 @@ include('./constants.php');
 		/* Adjust the percentage based on your design */
 		overflow: auto;
 	}
+
+	#edit-icon {
+		padding: 10px 20px;
+		font-size: 16px;
+		cursor: pointer;
+		border: 2px solid #3498db;
+		/* Border color */
+		color: #3498db;
+		/* Text color */
+		background-color: #ffffff;
+		/* Background color */
+		border-radius: 5px;
+		/* Border radius */
+		transition: all 0.3s ease;
+		/* Add smooth transition */
+	}
+
+	#edit-icon:hover {
+		background-color: #3498db;
+		/* Change background color on hover */
+		color: #ffffff;
+		/* Change text color on hover */
+	}
+
+	#file-upload {
+		display: none;
+	}
 </style>
 
 <body>
-	<div>
-
-		<img id="profile_picture">
-
-
+	<div id="transparent-box">
 		<button type="button" id="edit-icon">Add Image</button>
-
-
-		<input type="file" id="file-upload" style="display:none;" multiple>
-
-
+		<input type="file" id="file-upload" multiple>
 	</div>
 
 	<!-- feature image of the product cutting functions -->
@@ -202,10 +250,6 @@ include('./constants.php');
 					if (res.status == 1) {
 
 						var image_name = res.img_name;
-
-						var img_src = 'images/' + image_name;
-
-						$('#profile_picture').attr('src', img_src);
 
 						$('input[name="image"]').val(image_name);
 
