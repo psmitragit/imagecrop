@@ -16,6 +16,51 @@ function image_resize($data, $height, $width)
 		$originalHeight = $sourceProperties[1];
 		$maxWidth = $width;
 		$maxHeight = $height;
+
+		$exif = exif_read_data($uploadedFile);
+		if (!empty($exif['Orientation'])) {
+			$orientation = $exif['Orientation'];
+			$image = imagecreatefromstring(file_get_contents($uploadedFile));
+
+			switch ($orientation) {
+				case 3:
+					$image = imagerotate($image, 180, 0);
+					break;
+				case 6:
+					$image = imagerotate($image, -90, 0);
+					break;
+				case 8:
+					$image = imagerotate($image, 90, 0);
+					break;
+			}
+			switch ($imageType) {
+				case IMAGETYPE_PNG:
+					imagepng($image, $uploadedFile);
+					break;
+				case IMAGETYPE_JPEG:
+					imagejpeg($image, $uploadedFile, 100);
+					break;
+				case IMAGETYPE_GIF:
+					imagegif($image, $uploadedFile);
+					break;
+				case IMAGETYPE_WEBP:
+					imagewebp($image, $uploadedFile, 100);
+					break;
+				case IMAGETYPE_AVIF:
+					imageavif($image, $uploadedFile, 100);
+					break;
+				default:
+					// echo "Invalid Image type.<br><a href='index.php'>Back</a>";
+					return false;
+					exit;
+					break;
+			}
+
+			$sourceProperties = getimagesize($uploadedFile);
+
+			imagedestroy($image);
+		}
+
 		if ($originalWidth < $maxWidth) {
 			$maxWidth = $originalWidth;
 		}
@@ -28,6 +73,7 @@ function image_resize($data, $height, $width)
 		if ($maxHeight == 0) {
 			$maxHeight = round(($originalHeight / $originalWidth) * $maxWidth, 0);
 		}
+
 		switch ($imageType) {
 			case IMAGETYPE_PNG:
 				$resizedimg = resize($maxWidth, $maxHeight, $uploadedFile);
@@ -37,7 +83,7 @@ function image_resize($data, $height, $width)
 				break;
 			case IMAGETYPE_JPEG:
 				$resizedimg = resize($maxWidth, $maxHeight, $uploadedFile);
-				imagejpeg($resizedimg, $dirPath . $tmpFileName . "." . $ext, 99);
+				imagejpeg($resizedimg, $dirPath . $tmpFileName . "." . $ext, 100);
 				$resizedimg = $dirPath . $tmpFileName . "." . $ext;
 				$resizedimgname = $tmpFileName . "." . $ext;
 				break;
@@ -49,13 +95,13 @@ function image_resize($data, $height, $width)
 				break;
 			case IMAGETYPE_WEBP:
 				$resizedimg = resize($maxWidth, $maxHeight, $uploadedFile);
-				imagewebp($resizedimg, $dirPath . $tmpFileName . "." . $ext);
+				imagewebp($resizedimg, $dirPath . $tmpFileName . "." . $ext, 100);
 				$resizedimg = $dirPath . $tmpFileName . "." . $ext;
 				$resizedimgname = $tmpFileName . "." . $ext;
 				break;
 			case IMAGETYPE_AVIF:
 				$resizedimg = resize($maxWidth, $maxHeight, $uploadedFile);
-				imageavif($resizedimg, $dirPath . $tmpFileName . "." . $ext);
+				imageavif($resizedimg, $dirPath . $tmpFileName . "." . $ext, 100);
 				$resizedimg = $dirPath . $tmpFileName . "." . $ext;
 				$resizedimgname = $tmpFileName . "." . $ext;
 				break;
