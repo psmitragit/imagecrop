@@ -12,11 +12,7 @@ function image_resize($data, $height, $width)
 		$dirPath = 'images/';
 		$ext = pathinfo($data['name'], PATHINFO_EXTENSION);
 		$imageType = $sourceProperties[2];
-		$originalWidth = $sourceProperties[0];
-		$originalHeight = $sourceProperties[1];
-		$maxWidth = $width;
-		$maxHeight = $height;
-
+		
 		$exif = exif_read_data($uploadedFile);
 		if (!empty($exif['Orientation'])) {
 			$orientation = $exif['Orientation'];
@@ -60,6 +56,12 @@ function image_resize($data, $height, $width)
 
 			imagedestroy($image);
 		}
+
+
+		$originalWidth = $sourceProperties[0];
+		$originalHeight = $sourceProperties[1];
+		$maxWidth = $width;
+		$maxHeight = $height;
 
 		if ($originalWidth < $maxWidth) {
 			$maxWidth = $originalWidth;
